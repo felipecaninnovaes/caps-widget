@@ -8,7 +8,7 @@ Cada tarefa: um commit, `just check` verde ao terminar, um teste que a prova.
   - Teste: `i18n::pt_variants_use_portuguese`, `i18n::other_or_unknown_tags_use_english`, `i18n::menu_labels_per_language`, `lock_state::tooltip_*`
   - Verificar: `just test --test i18n`
 
-- [ ] **T2** — Núcleo: detector de mudança e intervalo de verificação
+- [x] **T2** — Núcleo: detector de mudança e intervalo de verificação
   - Requisitos: R2
   - Arquivos: `src/state.rs`, `tests/change_detector.rs`
   - Teste: `change_detector::emits_once_per_change`, `change_detector::repeated_reading_emits_nothing`, `change_detector::poll_interval_meets_latency_target`

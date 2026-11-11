@@ -7,4 +7,4 @@ pub mod i18n;
 pub mod state;
 
 pub use i18n::{Lang, Strings};
-pub use state::LockState;
+pub use state::{ChangeDetector, LockState, POLL_INTERVAL};

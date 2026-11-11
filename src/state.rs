@@ -1,5 +1,7 @@
 //! Lock key state and how it is described to the user.
 
+use std::time::Duration;
+
 use crate::i18n::Lang;
 
 /// Snapshot of the lock keys the widget reports on.
@@ -19,5 +21,28 @@ impl LockState {
             word(self.caps),
             word(self.num)
         )
+    }
+}
+
+/// How often the platform adapter reads the lock keys.
+///
+/// Half of the 100 ms latency target (R2), leaving room for timer jitter.
+pub const POLL_INTERVAL: Duration = Duration::from_millis(50);
+
+/// Turns a stream of polled readings into a stream of changes.
+#[derive(Debug, Default)]
+pub struct ChangeDetector {
+    last: Option<LockState>,
+}
+
+impl ChangeDetector {
+    /// Returns `Some(state)` when `state` differs from the previous reading
+    /// (or is the first one), `None` otherwise.
+    pub fn observe(&mut self, state: LockState) -> Option<LockState> {
+        if self.last == Some(state) {
+            return None;
+        }
+        self.last = Some(state);
+        Some(state)
     }
 }
