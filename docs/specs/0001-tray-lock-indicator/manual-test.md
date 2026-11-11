@@ -21,6 +21,7 @@ Executar no Windows 10/11 com o build de release (`just build` → `target\relea
 | 4 | CA16 | Abrir o `.exe` de novo | Continua um único ícone; `Get-Process caps-widget` mostra 1 processo | |
 | 5 | CA19 | `Stop-Process -Name explorer` (o Explorer reabre sozinho; senão, `explorer.exe`) | Ícone reaparece com o estado atual | |
 | 6 | CA18 | Configurações → Personalização → Cores → modo do Windows claro/escuro | Ícone troca para a variante legível sem reiniciar o app | |
+| 6b | R9 (DPI) | Configurações → Sistema → Tela → Escala: 100% → 150% (sem sair da sessão) | Ícone continua nítido (redesenhado no novo tamanho), não borrado | |
 | 7 | R5 | Clique direito no ícone; depois clicar fora | Menu com "Iniciar com o Windows" (desmarcado) e "Sair" no idioma do Windows; fecha ao clicar fora | |
 | 8 | R7 | Marcar "Iniciar com o Windows"; rodar o `reg query` acima; reabrir o menu | Valor `caps-widget` = `"<caminho do exe>"`; item marcado | |
 | 9 | R7 | Desmarcar; `reg query` de novo | Valor removido; item desmarcado | |
