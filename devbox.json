@@ -1,0 +1,16 @@
+{
+  "packages": [
+    "just@latest",
+    "jq@latest",
+    "gitleaks@latest",
+    "pre-commit@latest",
+    "gh@latest",
+    "git@latest"
+  ],
+  "shell": {
+    "scripts": {
+      "setup": "just setup",
+      "check": "just check"
+    }
+  }
+}

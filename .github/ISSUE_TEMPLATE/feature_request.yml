@@ -1,0 +1,26 @@
+name: Feature
+description: Proponha uma melhoria ou funcionalidade
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema
+      description: Qual problema isto resolve, e para quem?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposta
+      description: Comportamento desejado. Critérios de aceite são bem-vindos (Dado/Quando/Então).
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Fora de escopo

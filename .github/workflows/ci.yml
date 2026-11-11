@@ -1,0 +1,42 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # histórico completo para o gitleaks
+
+      - uses: jetify-com/devbox-install-action@v0.15.0
+        with:
+          enable-cache: true
+
+      - name: pre-commit (formatação genérica, yaml/json, chaves privadas, gitleaks)
+        run: devbox run -- pre-commit run --all-files --show-diff-on-failure
+        env:
+          SKIP: no-commit-to-branch
+
+      - name: secret scan (histórico)
+        run: devbox run -- just scan-secrets
+
+      - name: setup
+        run: devbox run -- just setup
+
+      - name: check (fmt-check + lint + test)
+        run: devbox run -- just check
+
+      - name: build
+        run: devbox run -- just build

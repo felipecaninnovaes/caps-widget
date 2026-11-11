@@ -1,0 +1,38 @@
+# --- Segredos ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+
+# --- IA / preferências pessoais ---
+CLAUDE.local.md
+.claude/settings.local.json
+.claude/.stop-check.ok
+
+# --- Ambiente ---
+.devbox/
+.direnv/
+
+# --- Editores / SO ---
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# --- Artefatos genéricos ---
+*.log
+coverage/
+.coverage
+tmp/
+
+# --- Stack ---
+# TODO(bootstrap): adicionar entradas da stack (node_modules/, target/, .venv/, dist/, bin/ ...)
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/
