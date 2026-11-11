@@ -26,7 +26,7 @@ Cada tarefa: um commit, `just check` verde ao terminar, um teste que a prova.
   - Teste: `autostart::disabled_by_default`, `autostart::enable_then_disable`, `autostart::moved_exe_reads_as_disabled`, `autostart::idempotent`, `autostart::store_failure_keeps_disabled`
   - Verificar: `just test --test autostart`
 
-- [ ] **T5** — `windows-sys` + adaptador de teclado (sem hook) + validação em segundo plano
+- [x] **T5** — `windows-sys` + adaptador de teclado (sem hook) + validação em segundo plano
   - Requisitos: R2, R3
   - Arquivos: `Cargo.toml`, `Cargo.lock`, `src/platform/mod.rs`, `src/platform/keyboard.rs`, `examples/poll_keys.rs`, `tests/keyboard_keys.rs`, `tests/no_keyboard_hook.rs`
   - Teste: `keyboard_keys::queries_only_caps_and_num`, `no_keyboard_hook::source_has_no_keyboard_hook`; manual: `cargo run --example poll_keys` com outra janela em foco mostra cada troca de Caps/Num (gate do risco principal — falhou → parar e discutir)
@@ -59,3 +59,4 @@ Cada tarefa: um commit, `just check` verde ao terminar, um teste que a prova.
 ## Notas de desvio
 <!-- T#: o que mudou em relação ao plano e por quê -->
 - T4: regras como funções livres `autostart::{is_enabled, set_enabled}` sobre `AutostartStore` (erro `io::Error`) em vez de um tipo `Autostart`; mesmo comportamento.
+- T5: guarda `no_keyboard_hook` também proíbe `RegisterRawInputDevices` e `GetAsyncKeyState` e varre `examples/`. ADR 0004 escrito junto com a dependência. **Gate manual de `poll_keys` em segundo plano ainda não executado** (injeção de teclas pelo agente foi negada) — rodar antes do PR.

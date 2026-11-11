@@ -6,6 +6,8 @@
 pub mod autostart;
 pub mod i18n;
 pub mod icon;
+#[cfg(windows)]
+pub mod platform;
 pub mod state;
 pub mod theme;
 
