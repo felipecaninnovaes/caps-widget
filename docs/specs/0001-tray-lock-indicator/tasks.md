@@ -63,3 +63,4 @@ Cada tarefa: um commit, `just check` verde ao terminar, um teste que a prova.
 - T6: acesso ao registro centralizado em `platform::registry` (privado); feature `Win32_Security` necessária para `RegCreateKeyExW`. Teste extra `run_key_points_at_the_user_run_key`.
 - T7: DPI awareness isolada em `platform::dpi`. Tema relido a cada `WM_SETTINGCHANGE` (barato) em vez de filtrar `"ImmersiveColorSet"`, evitando ler o `lParam` como ponteiro. **Roteiro manual (CA2, CA5, CA16, CA19, CA20) não executado pelo agente** (execução do app foi negada).
 - T8: troca de tema ao vivo já entrou no T7; aqui só o menu. **Roteiro manual (CA10, CA18, autostart em `HKCU\…\Run`) não executado pelo agente.**
+- T9: docs e roteiro escritos; **roteiro manual e medição do CA21 pendentes** (dependem de execução humana) — T9 fica aberta até o resultado ser colado no PR.

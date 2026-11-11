@@ -8,22 +8,24 @@ Usuário de Windows sem LED de Caps/Num Lock. O widget roda em segundo plano, l�
 ## Componentes
 | Componente | Responsabilidade | Depende de |
 |---|---|---|
-| Núcleo (`src/lib.rs`) | `LockState` e regras de apresentação (tooltip, qual ícone mostrar). Puro, testável em qualquer SO. | — |
-| Adaptador de teclado (`src/platform/`, previsto) | Lê Caps/Num Lock via Win32 (`GetKeyState`) e detecta mudanças. | Win32 (`windows-sys`, a decidir na spec) |
-| Bandeja (`src/platform/`, previsto) | Cria/atualiza o ícone e tooltip; menu "Sair". | Win32 / `tray-icon` (a decidir na spec) |
-| `main` | Liga adaptadores ao núcleo e roda o loop de mensagens. | todos |
+| Núcleo (`state`, `i18n`, `theme`, `icon`, `autostart`) | `LockState` e `ChangeDetector`; textos pt/en; tema → cor; render RGBA do ícone; regras de "Iniciar com o Windows" sobre o trait `AutostartStore`. Puro, testável em qualquer SO. | — |
+| Adaptadores (`src/platform/`) | `keyboard` (`GetKeyState` só de Caps/Num), `locale`, `theme` e `autostart_registry` (registro `HKCU`), `instance` (mutex), `dpi`. | Win32 (`windows-sys`) |
+| Bandeja (`platform::tray`) | Janela oculta de nível superior: timer de polling, ícone na bandeja, menu, reação a `TaskbarCreated` e `WM_SETTINGCHANGE`. | adaptadores + núcleo |
+| `main` | DPI, instância única, chama `tray::run`. Subsystem `windows` (sem console). | todos |
 
 Regra de fronteira: o núcleo não conhece Win32; só `src/platform/` usa `unsafe`/`cfg(windows)`.
 
 ## Fluxos principais
-1. Usuário pressiona Caps Lock → adaptador de teclado detecta a mudança (hook de teclado de baixo nível ou polling — a decidir).
-2. Adaptador produz um novo `LockState` → núcleo decide ícone e tooltip.
-3. Bandeja atualiza o ícone.
+1. **Estado das teclas:** `WM_TIMER` a cada 50 ms → `keyboard::read()` → `ChangeDetector` → se mudou, `icon::render` + tooltip → `Shell_NotifyIconW(NIM_MODIFY)`. Sem hook de teclado: o processo nunca vê o que é digitado.
+2. **Explorer reiniciado / login lento:** broadcast `TaskbarCreated` → `NIM_ADD` de novo com o estado atual. Falha no `NIM_ADD` inicial não encerra o app.
+3. **Tema:** `WM_SETTINGCHANGE` → relê `SystemUsesLightTheme` → se mudou, redesenha.
+4. **Menu:** clique direito (`WM_CONTEXTMENU` via `NOTIFYICON_VERSION_4`) → menu montado relendo o registro (a marca sempre reflete o estado real) → alterna o valor em `HKCU\…\Run` ou destrói a janela (Sair).
 
 ## Integrações externas
 | Sistema | Para quê | Como autenticamos | Variáveis de ambiente |
 |---|---|---|---|
-| API Win32 | Estado das teclas e ícone na bandeja | — (local) | — |
+| API Win32 | Estado das teclas, ícone na bandeja, idioma, tema | — (local) | — |
+| Registro do usuário (`HKCU\Software\Microsoft\Windows\CurrentVersion\Run`, valor `caps-widget`) | Iniciar com o Windows; escrito só por ação do usuário | — (escopo do usuário) | — |
 
 ## Decisões
-Ver [adr/](adr/) — em especial [0003](adr/0003-rust-windows-tray-stack.md) (stack).
+Ver [adr/](adr/) — em especial [0003](adr/0003-rust-windows-tray-stack.md) (stack) e [0004](adr/0004-win32-direct-polling-code-icons.md) (Win32 direto, polling sem hook, ícones em código).
