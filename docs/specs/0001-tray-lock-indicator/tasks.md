@@ -14,7 +14,7 @@ Cada tarefa: um commit, `just check` verde ao terminar, um teste que a prova.
   - Teste: `change_detector::emits_once_per_change`, `change_detector::repeated_reading_emits_nothing`, `change_detector::poll_interval_meets_latency_target`
   - Verificar: `just test --test change_detector`
 
-- [ ] **T3** — Núcleo: tema e render das 8 variantes de ícone
+- [x] **T3** — Núcleo: tema e render das 8 variantes de ícone
   - Requisitos: R1, R9
   - Arquivos: `src/theme.rs`, `src/icon.rs`, `tests/icon.rs`
   - Teste: `icon::caps_on_num_off_lights_only_a`, `icon::four_states_render_distinct`, `icon::themes_render_distinct`, `icon::unknown_theme_is_dark`
