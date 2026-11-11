@@ -1,6 +1,5 @@
 blank_issues_enabled: false
 contact_links:
   - name: Vulnerabilidade de segurança
-    # TODO(bootstrap): substituir OWNER/REPO
-    url: https://github.com/OWNER/REPO/security/advisories/new
+    url: https://github.com/felipecaninnovaes/caps-widget/security/advisories/new
     about: Reporte vulnerabilidades de forma privada — não abra issue pública.

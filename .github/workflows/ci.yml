@@ -13,7 +13,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check:
+  # Higiene agnóstica de stack, dentro do devbox (Linux).
+  hygiene:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -32,11 +33,25 @@ jobs:
       - name: secret scan (histórico)
         run: devbox run -- just scan-secrets
 
+  # App só para Windows: lint/test/build precisam do target MSVC, e o devbox não roda no Windows.
+  # A toolchain vem do rust-toolchain.toml (o rustup do runner lê o arquivo).
+  check:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: extractions/setup-just@v3
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: pre-commit
+        run: python -m pip install pre-commit
+
       - name: setup
-        run: devbox run -- just setup
+        run: just setup
 
       - name: check (fmt-check + lint + test)
-        run: devbox run -- just check
+        run: just check
 
       - name: build
-        run: devbox run -- just build
+        run: just build

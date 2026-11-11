@@ -1,0 +1,17 @@
+[package]
+name = "caps-widget"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97"
+description = "Windows tray indicator for Caps Lock and Num Lock state."
+license = "MIT"
+repository = "https://github.com/felipecaninnovaes/caps-widget"
+publish = false
+
+[dependencies]
+
+[lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }

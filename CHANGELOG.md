@@ -5,6 +5,6 @@ Todas as mudanças relevantes para usuários deste projeto. Formato baseado em [
 ## [Unreleased]
 
 ### Added
--
+- Esqueleto do projeto em Rust: modelo `LockState` com tooltip de Caps/Num Lock.
 
 <!-- Seções possíveis: Added, Changed, Deprecated, Removed, Fixed, Security -->

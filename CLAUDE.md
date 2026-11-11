@@ -1,11 +1,9 @@
-# TODO(bootstrap): nome do projeto
+# caps-widget
 
-TODO(bootstrap): 1–2 frases — o que é, para quem, e o que **não** é.
-
-<!-- TODO(bootstrap): remova este aviso. Repositório recém-criado a partir do modelo? Rode `/bootstrap` antes de qualquer outra coisa. -->
+Indicador de Caps Lock / Num Lock na bandeja do Windows, para quem usa teclado sem LED. Rust, só Windows. **Não** é remapeador de teclas, keylogger nem app multiplataforma (por ora).
 
 ## Comandos (contrato — sempre via `just`)
-- Ambiente: `devbox shell` (ou automático via direnv). Ferramentas e versões em `devbox.json`.
+- Ambiente: no Windows (alvo principal) use rustup + `just` + `pre-commit` instalados; no Linux/WSL, `devbox shell` (ou direnv). Ferramentas em `devbox.json`.
 - Verificação completa: `just check` (fmt-check + lint + test). O hook `Stop` exige que passe.
 - Um teste: `just test <caminho-ou-filtro>`
 - Formatar: `just fmt` · Lint: `just lint` · Build: `just build` · Segredos: `just scan-secrets`
@@ -38,7 +36,10 @@ TODO(bootstrap): 1–2 frases — o que é, para quem, e o que **não** é.
 
 ## Armadilhas deste repositório
 <!-- Uma linha por item, imperativa e específica: o que a IA errou 2x ou o que engana quem lê o código. Remova o que deixar de ser verdade. -->
-- (nenhuma ainda)
+- Toolchain fixada em `rust-toolchain.toml` (1.97): o rustup baixa sozinho na primeira chamada — não use `+stable`/`+nightly`.
+- App só para Windows: `just lint`/`build` validam o target MSVC; no Linux/WSL (devbox) só o núcleo puro é exercitado de fato.
+- `just test` repassa argumentos ao `cargo test`: `just test --test lock_state` (um arquivo) ou `just test tooltip` (filtro por nome).
+- `Cargo.lock` é versionado (binário) e as receitas usam `--locked`: dependência nova exige `cargo build` local antes do commit.
 
 ## Mapa
 - [docs/architecture.md](docs/architecture.md) · [docs/adr/](docs/adr/) · [docs/specs/](docs/specs/)
