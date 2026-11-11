@@ -44,7 +44,7 @@ Cada tarefa: um commit, `just check` verde ao terminar, um teste que a prova.
   - Teste: testes automáticos de T1–T6 continuam verdes; manual CA2, CA5, CA16, CA19, CA20
   - Verificar: `just check` + `cargo run --release` e roteiro manual
 
-- [ ] **T8** — Menu (Iniciar com o Windows, Sair) e troca de tema ao vivo
+- [x] **T8** — Menu (Iniciar com o Windows, Sair) e troca de tema ao vivo
   - Requisitos: R5, R6, R7, R9
   - Arquivos: `src/platform/tray.rs`
   - Teste: manual CA10, CA18; marcar/desmarcar autostart e conferir em `HKCU\…\Run`
@@ -62,3 +62,4 @@ Cada tarefa: um commit, `just check` verde ao terminar, um teste que a prova.
 - T5: guarda `no_keyboard_hook` também proíbe `RegisterRawInputDevices` e `GetAsyncKeyState` e varre `examples/`. ADR 0004 escrito junto com a dependência. **Gate manual de `poll_keys` em segundo plano ainda não executado** (injeção de teclas pelo agente foi negada) — rodar antes do PR.
 - T6: acesso ao registro centralizado em `platform::registry` (privado); feature `Win32_Security` necessária para `RegCreateKeyExW`. Teste extra `run_key_points_at_the_user_run_key`.
 - T7: DPI awareness isolada em `platform::dpi`. Tema relido a cada `WM_SETTINGCHANGE` (barato) em vez de filtrar `"ImmersiveColorSet"`, evitando ler o `lParam` como ponteiro. **Roteiro manual (CA2, CA5, CA16, CA19, CA20) não executado pelo agente** (execução do app foi negada).
+- T8: troca de tema ao vivo já entrou no T7; aqui só o menu. **Roteiro manual (CA10, CA18, autostart em `HKCU\…\Run`) não executado pelo agente.**

@@ -17,20 +17,25 @@ use windows_sys::Win32::UI::Shell::{
     NOTIFYICON_VERSION_4, NOTIFYICONDATAW, Shell_NotifyIconW,
 };
 use windows_sys::Win32::UI::WindowsAndMessaging::{
-    CreateIcon, CreateWindowExW, DefWindowProcW, DestroyIcon, DispatchMessageW, GetMessageW,
-    GetSystemMetrics, HICON, KillTimer, MSG, PostQuitMessage, RegisterClassExW,
-    RegisterWindowMessageW, SM_CXSMICON, SetTimer, TranslateMessage, WM_APP, WM_DESTROY,
-    WM_SETTINGCHANGE, WM_TIMER, WNDCLASSEXW, WS_OVERLAPPED,
+    AppendMenuW, CreateIcon, CreatePopupMenu, CreateWindowExW, DefWindowProcW, DestroyIcon,
+    DestroyMenu, DestroyWindow, DispatchMessageW, GetMessageW, GetSystemMetrics, HICON, KillTimer,
+    MF_CHECKED, MF_SEPARATOR, MF_STRING, MF_UNCHECKED, MSG, PostMessageW, PostQuitMessage,
+    RegisterClassExW, RegisterWindowMessageW, SM_CXSMICON, SetForegroundWindow, SetTimer,
+    TPM_NONOTIFY, TPM_RETURNCMD, TPM_RIGHTBUTTON, TrackPopupMenu, TranslateMessage, WM_APP,
+    WM_CONTEXTMENU, WM_DESTROY, WM_NULL, WM_SETTINGCHANGE, WM_TIMER, WNDCLASSEXW, WS_OVERLAPPED,
 };
 
+use super::autostart_registry::RegistryRunKey;
 use super::{keyboard, locale, theme, wide};
-use crate::{ChangeDetector, Lang, LockState, POLL_INTERVAL, Theme, icon};
+use crate::{ChangeDetector, Lang, LockState, POLL_INTERVAL, Theme, autostart, icon};
 
 const CLASS_NAME: &str = "caps-widget";
 const ICON_ID: u32 = 1;
 const TIMER_ID: usize = 1;
 /// Notifications from the tray icon arrive as this message.
 const WM_TRAY: u32 = WM_APP + 1;
+const MENU_AUTOSTART: usize = 1;
+const MENU_EXIT: usize = 2;
 
 struct App {
     hwnd: HWND,
@@ -253,8 +258,80 @@ fn create_icon(state: LockState, theme: Theme, size: u32) -> Option<HICON> {
     (!handle.is_null()).then_some(handle)
 }
 
+/// Shows the context menu at `(x, y)` and runs the chosen command.
+///
+/// Must not run inside [`with_app`]: the menu's modal loop keeps dispatching
+/// timer ticks, and "Exit" destroys the window, both of which need the state.
+fn show_menu(hwnd: HWND, x: i32, y: i32) {
+    let strings = with_app(|app| app.lang).unwrap_or_default().strings();
+    let mut store = RegistryRunKey::current_user_run();
+    let exe = std::env::current_exe().ok();
+    // The check mark always reflects the registry as it is now (R7, CA15).
+    let enabled = exe
+        .as_deref()
+        .is_some_and(|exe| autostart::is_enabled(&store, exe).unwrap_or(false));
+
+    let autostart_label = wide(strings.start_with_windows);
+    let exit_label = wide(strings.exit);
+    // SAFETY: the menu is created, used and destroyed within this function;
+    // the label buffers outlive every call that reads them.
+    let command = unsafe {
+        let menu = CreatePopupMenu();
+        if menu.is_null() {
+            return;
+        }
+        let check = if enabled { MF_CHECKED } else { MF_UNCHECKED };
+        AppendMenuW(
+            menu,
+            MF_STRING | check,
+            MENU_AUTOSTART,
+            autostart_label.as_ptr(),
+        );
+        AppendMenuW(menu, MF_SEPARATOR, 0, ptr::null());
+        AppendMenuW(menu, MF_STRING, MENU_EXIT, exit_label.as_ptr());
+
+        // Documented workaround so the menu closes when clicking elsewhere.
+        SetForegroundWindow(hwnd);
+        let command = TrackPopupMenu(
+            menu,
+            TPM_RIGHTBUTTON | TPM_RETURNCMD | TPM_NONOTIFY,
+            x,
+            y,
+            0,
+            hwnd,
+            ptr::null(),
+        );
+        PostMessageW(hwnd, WM_NULL, 0, 0);
+        DestroyMenu(menu);
+        command
+    };
+
+    match usize::try_from(command) {
+        Ok(MENU_AUTOSTART) => {
+            if let Some(exe) = exe {
+                // Errors are not fatal: the next menu re-reads the real state.
+                let _ = autostart::set_enabled(&mut store, &exe, !enabled);
+            }
+        }
+        Ok(MENU_EXIT) => {
+            // SAFETY: `hwnd` is our window; WM_DESTROY removes the icon and
+            // ends the message loop (R6).
+            unsafe { DestroyWindow(hwnd) };
+        }
+        _ => {}
+    }
+}
+
 extern "system" fn window_proc(hwnd: HWND, msg: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
     match msg {
+        // With NOTIFYICON_VERSION_4 the event is LOWORD(lParam) and the anchor
+        // point (mouse or keyboard) is packed in wParam.
+        WM_TRAY if (lparam as u32 & 0xFFFF) == WM_CONTEXTMENU => {
+            let x = i32::from((wparam & 0xFFFF) as u16 as i16);
+            let y = i32::from(((wparam >> 16) & 0xFFFF) as u16 as i16);
+            show_menu(hwnd, x, y);
+            0
+        }
         WM_TIMER if wparam == TIMER_ID => {
             with_app(App::poll);
             0
