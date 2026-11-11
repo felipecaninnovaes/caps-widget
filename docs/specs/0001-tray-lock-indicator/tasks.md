@@ -32,7 +32,7 @@ Cada tarefa: um commit, `just check` verde ao terminar, um teste que a prova.
   - Teste: `keyboard_keys::queries_only_caps_and_num`, `no_keyboard_hook::source_has_no_keyboard_hook`; manual: `cargo run --example poll_keys` com outra janela em foco mostra cada troca de Caps/Num (gate do risco principal — falhou → parar e discutir)
   - Verificar: `just test --test keyboard_keys`
 
-- [ ] **T6** — Adaptadores de idioma, tema e registro de autostart
+- [x] **T6** — Adaptadores de idioma, tema e registro de autostart
   - Requisitos: R4, R7, R9
   - Arquivos: `src/platform/locale.rs`, `src/platform/theme.rs`, `src/platform/autostart_registry.rs`, `tests/autostart_registry.rs`, `tests/platform_smoke.rs`
   - Teste: `autostart_registry::round_trip_in_temp_key`, `platform_smoke::locale_tag_not_empty`, `platform_smoke::theme_reads_without_panic`
@@ -60,3 +60,4 @@ Cada tarefa: um commit, `just check` verde ao terminar, um teste que a prova.
 <!-- T#: o que mudou em relação ao plano e por quê -->
 - T4: regras como funções livres `autostart::{is_enabled, set_enabled}` sobre `AutostartStore` (erro `io::Error`) em vez de um tipo `Autostart`; mesmo comportamento.
 - T5: guarda `no_keyboard_hook` também proíbe `RegisterRawInputDevices` e `GetAsyncKeyState` e varre `examples/`. ADR 0004 escrito junto com a dependência. **Gate manual de `poll_keys` em segundo plano ainda não executado** (injeção de teclas pelo agente foi negada) — rodar antes do PR.
+- T6: acesso ao registro centralizado em `platform::registry` (privado); feature `Win32_Security` necessária para `RegCreateKeyExW`. Teste extra `run_key_points_at_the_user_run_key`.
