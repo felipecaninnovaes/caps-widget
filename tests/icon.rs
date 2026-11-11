@@ -72,3 +72,36 @@ fn unknown_theme_is_dark() {
     assert_eq!(Theme::from_light_flag(Some(1)), Theme::Light);
     assert_eq!(Theme::default(), Theme::Dark);
 }
+
+/// Bounding box `(width, height)` of every non-transparent pixel.
+fn ink_box(rgba: &[u8], size: u32) -> (u32, u32) {
+    let inked: Vec<(u32, u32)> = (0..size)
+        .flat_map(|y| (0..size).map(move |x| (x, y)))
+        .filter(|&(x, y)| rgba[((y * size + x) * 4 + 3) as usize] > 0)
+        .collect();
+    let xs = inked.iter().map(|p| p.0);
+    let ys = inked.iter().map(|p| p.1);
+    (
+        xs.clone().max().unwrap() - xs.min().unwrap() + 1,
+        ys.clone().max().unwrap() - ys.min().unwrap() + 1,
+    )
+}
+
+#[test]
+fn glyphs_are_not_stretched() {
+    let all_on = LockState {
+        caps: true,
+        num: true,
+    };
+    for size in SIZES {
+        let (w, h) = ink_box(&icon::render(all_on, Theme::Dark, size), size);
+        // Two glyphs side by side are clearly wider than tall (~1.5:1);
+        // stretching them vertically pushes this towards or below 1.
+        let ratio = w as f32 / h as f32;
+        assert!(
+            (1.3..=1.8).contains(&ratio),
+            "{size}px: ink {w}x{h} (ratio {ratio:.2})"
+        );
+        assert!(w * 10 >= size * 6, "{size}px: ink only {w}px wide");
+    }
+}

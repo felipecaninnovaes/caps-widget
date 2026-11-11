@@ -65,3 +65,4 @@ Cada tarefa: um commit, `just check` verde ao terminar, um teste que a prova.
 - T8: troca de tema ao vivo já entrou no T7; aqui só o menu. **Roteiro manual (CA10, CA18, autostart em `HKCU\…\Run`) não executado pelo agente.**
 - T9: docs e roteiro escritos; **roteiro manual e medição do CA21 pendentes** (dependem de execução humana) — T9 fica aberta até o resultado ser colado no PR.
 - Revisão: eventos de tema/`TaskbarCreated` que chegam com o estado ocupado são adiados e reaplicados no próximo tick (antes eram descartados); tamanho do ícone via `GetSystemMetricsForDpi` com a DPI atual da janela, relido em `WM_DPICHANGED`/`WM_DISPLAYCHANGE`/`WM_SETTINGCHANGE`.
+- Fix pós-teste manual: glifos saíam esticados na vertical (escala `sy = sx + 1`). Agora escala uniforme e fonte 7×10 em negrito escolhida quando cabe (teste `icon::glyphs_are_not_stretched`).
