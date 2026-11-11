@@ -38,7 +38,7 @@ Cada tarefa: um commit, `just check` verde ao terminar, um teste que a prova.
   - Teste: `autostart_registry::round_trip_in_temp_key`, `platform_smoke::locale_tag_not_empty`, `platform_smoke::theme_reads_without_panic`
   - Verificar: `just test --test autostart_registry`
 
-- [ ] **T7** — Bandeja: instância única, janela oculta, ícone, polling, `TaskbarCreated`, sem console
+- [x] **T7** — Bandeja: instância única, janela oculta, ícone, polling, `TaskbarCreated`, sem console
   - Requisitos: R1, R2, R8, R10, R11
   - Arquivos: `src/platform/instance.rs`, `src/platform/tray.rs`, `src/main.rs`
   - Teste: testes automáticos de T1–T6 continuam verdes; manual CA2, CA5, CA16, CA19, CA20
@@ -61,3 +61,4 @@ Cada tarefa: um commit, `just check` verde ao terminar, um teste que a prova.
 - T4: regras como funções livres `autostart::{is_enabled, set_enabled}` sobre `AutostartStore` (erro `io::Error`) em vez de um tipo `Autostart`; mesmo comportamento.
 - T5: guarda `no_keyboard_hook` também proíbe `RegisterRawInputDevices` e `GetAsyncKeyState` e varre `examples/`. ADR 0004 escrito junto com a dependência. **Gate manual de `poll_keys` em segundo plano ainda não executado** (injeção de teclas pelo agente foi negada) — rodar antes do PR.
 - T6: acesso ao registro centralizado em `platform::registry` (privado); feature `Win32_Security` necessária para `RegCreateKeyExW`. Teste extra `run_key_points_at_the_user_run_key`.
+- T7: DPI awareness isolada em `platform::dpi`. Tema relido a cada `WM_SETTINGCHANGE` (barato) em vez de filtrar `"ImmersiveColorSet"`, evitando ler o `lParam` como ponteiro. **Roteiro manual (CA2, CA5, CA16, CA19, CA20) não executado pelo agente** (execução do app foi negada).
