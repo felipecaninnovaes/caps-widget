@@ -2,7 +2,7 @@
 
 Cada tarefa: um commit, `just check` verde ao terminar, um teste que a prova.
 
-- [ ] **T1** — Núcleo: idiomas, tooltip e rótulos do menu
+- [x] **T1** — Núcleo: idiomas, tooltip e rótulos do menu
   - Requisitos: R4, R5
   - Arquivos: `src/lib.rs`, `src/state.rs`, `src/i18n.rs`, `tests/lock_state.rs`, `tests/i18n.rs`
   - Teste: `i18n::pt_variants_use_portuguese`, `i18n::other_or_unknown_tags_use_english`, `i18n::menu_labels_per_language`, `lock_state::tooltip_*`
