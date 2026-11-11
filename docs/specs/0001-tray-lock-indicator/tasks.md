@@ -20,7 +20,7 @@ Cada tarefa: um commit, `just check` verde ao terminar, um teste que a prova.
   - Teste: `icon::caps_on_num_off_lights_only_a`, `icon::four_states_render_distinct`, `icon::themes_render_distinct`, `icon::unknown_theme_is_dark`
   - Verificar: `just test --test icon`
 
-- [ ] **T4** — Núcleo: regras de "Iniciar com o Windows"
+- [x] **T4** — Núcleo: regras de "Iniciar com o Windows"
   - Requisitos: R7
   - Arquivos: `src/autostart.rs`, `tests/autostart.rs`
   - Teste: `autostart::disabled_by_default`, `autostart::enable_then_disable`, `autostart::moved_exe_reads_as_disabled`, `autostart::idempotent`, `autostart::store_failure_keeps_disabled`
@@ -58,3 +58,4 @@ Cada tarefa: um commit, `just check` verde ao terminar, um teste que a prova.
 
 ## Notas de desvio
 <!-- T#: o que mudou em relação ao plano e por quê -->
+- T4: regras como funções livres `autostart::{is_enabled, set_enabled}` sobre `AutostartStore` (erro `io::Error`) em vez de um tipo `Autostart`; mesmo comportamento.

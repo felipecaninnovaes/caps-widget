@@ -3,6 +3,7 @@
 //! Platform adapters (Win32 key state, tray icon) feed a [`LockState`] in and
 //! render what it describes; nothing in the core modules touches the OS.
 
+pub mod autostart;
 pub mod i18n;
 pub mod icon;
 pub mod state;
