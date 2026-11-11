@@ -30,3 +30,13 @@ Executar no Windows 10/11 com o build de release (`just build` → `target\relea
 
 ## Observações
 <!-- Desvios, prints, valores medidos -->
+
+### Execução automatizada parcial (agente, 2026-11-11, Windows 11 Pro 10.0.26300)
+Itens observáveis sem olhar a tela, executados via PowerShell. Itens visuais (2, 3, 5–9, 11) continuam para execução humana.
+
+| # | CA | Como | Resultado |
+|---|---|---|---|
+| 0 | gate T5 | `poll_keys` release, oculto, em segundo plano; `WScript.Shell.SendKeys` Caps, Num, Num, Caps (900 ms entre teclas) | ✅ 5 linhas: estado inicial + uma por troca, todas corretas. Numa 1ª rodada a **leitura inicial veio obsoleta** (Caps ligado) e se corrigiu sozinha antes da 1ª tecla; demais leituras corretas. |
+| 1 | CA20 (parcial) | `Start-Process` do `.exe` release | ✅ processo vivo, `MainWindowHandle = 0` (sem janela visível); sem console (subsystem `windows`). Duplo clique não testado. |
+| 4 | CA16 | segunda execução com a primeira rodando | ✅ segunda saiu com código 0; `Get-Process caps-widget` = 1 |
+| 10 | CA21 (parcial) | ocioso **30 s** (não 5 min) | ✅ CPU 0 ms no período; memória privada 1,38 MB; conjunto de trabalho 9,71 MB (inclui DLLs compartilhadas; o Gerenciador de Tarefas mostra o privado) |
