@@ -5,9 +5,13 @@
     "gitleaks@latest",
     "pre-commit@latest",
     "gh@latest",
-    "git@latest"
+    "git@latest",
+    "rustup@latest"
   ],
   "shell": {
+    "init_hook": [
+      "rustup show active-toolchain >/dev/null 2>&1 || rustup toolchain install"
+    ],
     "scripts": {
       "setup": "just setup",
       "check": "just check"

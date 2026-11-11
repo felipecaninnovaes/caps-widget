@@ -1,7 +1,6 @@
 # Contrato de comandos do projeto.
 # Claude Code, hooks, pre-commit e CI chamam SOMENTE estas receitas:
-# troque a implementação, nunca o nome. Receitas ainda não configuradas
-# estão marcadas com TODO(bootstrap) e terminam com sucesso.
+# troque a implementação, nunca o nome.
 
 set windows-shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]
 
@@ -12,34 +11,39 @@ default:
 # Instala dependências da stack e os git hooks
 setup:
     pre-commit install --install-hooks --hook-type pre-commit --hook-type commit-msg
-    @echo "setup: TODO(bootstrap) instalar dependencias da stack"
+    cargo fetch
 
 # Verificação completa (exigida pelo hook Stop e pelo CI)
 check: fmt-check lint test
 
 # Formata todo o código
 fmt:
-    @echo "fmt: TODO(bootstrap)"
+    cargo fmt --all
 
 # Falha se algum arquivo não estiver formatado
 fmt-check:
-    @echo "fmt-check: TODO(bootstrap)"
+    cargo fmt --all --check
 
-# Formata um único arquivo (chamado pelo hook PostToolUse a cada edição)
+# Formata um único arquivo (chamado pelo hook PostToolUse a cada edição); ignora não-Rust
+[windows]
 fmt-file file:
-    @echo "fmt-file: TODO(bootstrap) {{file}}"
+    if ('{{file}}' -like '*.rs') { rustfmt '{{file}}' }
+
+[unix]
+fmt-file file:
+    case '{{file}}' in *.rs) rustfmt '{{file}}' ;; esac
 
 # Lint + typecheck
 lint:
-    @echo "lint: TODO(bootstrap)"
+    cargo clippy --all-targets --locked -- -D warnings
 
-# Roda os testes; aceita caminho/filtro: just test path/to/test
+# Roda os testes; aceita caminho/filtro: just test --test lock_state | just test tooltip
 test *args:
-    @echo "test: TODO(bootstrap) {{args}}"
+    cargo test --locked {{args}}
 
 # Build de produção
 build:
-    @echo "build: TODO(bootstrap)"
+    cargo build --release --locked
 
 # Procura segredos no histórico git
 scan-secrets:
