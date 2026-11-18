@@ -21,7 +21,7 @@ jobs:
         with:
           fetch-depth: 0 # histórico completo para o gitleaks
 
-      - uses: jetify-com/devbox-install-action@v0.15.0
+      - uses: jetify-com/devbox-install-action@v0.16.0
         with:
           enable-cache: true
 
@@ -40,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: extractions/setup-just@v3
+      - uses: extractions/setup-just@v4
 
       - uses: Swatinem/rust-cache@v2
 
